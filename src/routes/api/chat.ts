@@ -48,14 +48,18 @@ export async function POST({ request }: { request: Request }) {
   }
 }
 
+// Every tool use this to define the tool. It gives the AI some type of capability
 const getTodosToolDef = toolDefinition({
+  // What is the description of the tool
   description: 'Fetch a list of todos from the database',
+  // What is the data being passed to the tool
   inputSchema: z.object({
     query: z
       .string()
       .optional()
       .describe('An optional search query to filter todos'),
   }),
+  // What is the data being returned from the tool
   outputSchema: z.array(
     z.object({
       id: z.number(),
@@ -64,9 +68,12 @@ const getTodosToolDef = toolDefinition({
       userId: z.number(),
     }),
   ),
+  // What is the name of the tool
   name: 'get_todos',
+  // needsApproval: true,
 })
 
+// This is the server implementation of the tool
 const getTodosTool = getTodosToolDef.server(async ({ query }) => {
   const url = new URL('https://jsonplaceholder.typicode.com/todos')
   if (query) url.searchParams.set('q', query)
@@ -76,6 +83,8 @@ const getTodosTool = getTodosToolDef.server(async ({ query }) => {
   return await response.json()
 })
 
+// This is a tool that allows the AI to update the counter value stored in the browser
+// If you want to run on the client, just pass along the definition
 export const updateCounterToolDef = toolDefinition({
   name: 'set_count',
   description: 'Set the counter value stored in the browser',

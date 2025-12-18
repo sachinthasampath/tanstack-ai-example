@@ -5,15 +5,17 @@ import { fetchServerSentEvents, useChat } from '@tanstack/ai-react'
 import { clientTools } from '@tanstack/ai-client'
 import { updateCounterToolDef } from '@/routes/api/chat'
 
+// This is the client implementation of the tool
 const updateCounterTool = updateCounterToolDef.client(({ count }) => {
   localStorage.setItem('counter', count.toString())
 
   return { success: true }
-})
+}) 
 
 export function Chat() {
   const [input, setInput] = useState('')
 
+  // This is the hook that allows the AI to send messages to the server
   const { messages, sendMessage, isLoading } = useChat({
     connection: fetchServerSentEvents('/api/chat'),
     tools: clientTools(updateCounterTool),
